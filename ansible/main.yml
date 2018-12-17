@@ -1,0 +1,40 @@
+---
+- name: Create ipsec_exporter service
+  hosts: all
+  vars:
+    docker_registry:
+    docker_username:
+    docker_password:
+  tasks:
+    - name: Copy the init service
+      become: true
+      copy:
+        src: files/ipsec_exporter.service
+        dest: /etc/init.d/ipsec_exporter
+    - name: Give execution permissions to the init service
+      become: true
+      file:
+        path: /etc/init.d/ipsec_exporter
+        mode: 0755
+    - name: Install docker-py
+      become: true
+      pip:
+        name: docker-py
+        state: present
+    - name: Login to remote registry
+      become: true
+      docker_login:
+        registry: "{{ docker_registry }}"
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
+    - name: Enable and start service
+      become: true
+      service:
+        name: ipsec_exporter
+        state: started
+        enabled: true
+    - name: Delete the registry permissions
+      become: true
+      file:
+        path: /root/.docker/config.json
+        state: absent
