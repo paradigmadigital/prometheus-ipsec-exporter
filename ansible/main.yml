@@ -11,10 +11,6 @@
       copy:
         src: files/ipsec_exporter.service
         dest: /etc/init.d/ipsec_exporter
-    - name: Give execution permissions to the init service
-      become: true
-      file:
-        path: /etc/init.d/ipsec_exporter
         mode: 0755
     - name: Install docker-py
       become: true
