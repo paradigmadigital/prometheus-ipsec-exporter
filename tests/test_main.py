@@ -1,5 +1,4 @@
 import unittest.mock
-import pytest
 from ipsec_exporter.main import IpsecExporter
 
 
@@ -78,6 +77,6 @@ class TestIpsecExporter(unittest.TestCase):
         assert serve_metrics.call_count == 1
         # TODO test self.flask.run
 
-    @pytest.mark.skip(reason="it's in the TODO list")
+    @unittest.skip("it's in the TODO list")
     def test_serve_metrics(self):
         pass
