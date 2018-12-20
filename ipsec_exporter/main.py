@@ -13,19 +13,22 @@ class IpsecExporter:
     def __init__(self):
         self.app = Flask(__name__)
         self.devnull = open(devnull, "w")
-        self.counter = self.get_connections()
-        if not self.counter:
+        self.connections = self.get_connections()
+        if not self.connections:
             print("There's no files in /etc/ipsec.d/")
             exit(1)
+        self.gauge = Gauge("ipsec_tunnel_status",
+                           "Output from the check_ipsec script",
+                           ["connection_name"])
         self.run_webserver()
 
     def get_connections(self):
         "Get ipsec's connection name with it's initialized prometheus gauge."
         ipsec_conf_files = glob.glob("/etc/ipsec.d/*.conf")
-        counter = {}
+        connections = []
 
         for ipsec_conf_file in ipsec_conf_files:
-            # read all files on /etc/ipsec.d/*.conf
+            # Read all files on /etc/ipsec.d/*.conf
             f = open(ipsec_conf_file)
             lines = f.readlines()
             f.close()
@@ -38,20 +41,15 @@ class IpsecExporter:
                 filter(r.match, lines)
             )[0].split(" ")[1].replace("-", "_").replace("\n", "")
 
-            # Initialize the prometheus counter
-            counter.update(
-                {
-                    connection: Gauge("ipsec_%s" % connection,
-                                      "Output from the check_ipsec script")
-                }
-            )
+            connections.append(connection)
 
-        return counter
+        return connections
 
     def serve_metrics(self):
         "Main method to serve the metrics."
-        counter = self.counter
+        connections = self.connections
         devnull = self.devnull
+        gauge = self.gauge
 
         @self.app.route("/metrics")
         def metrics():
@@ -59,11 +57,11 @@ class IpsecExporter:
             Flask endpoint to expose the prometheus metrics. With every request
             it gets, it executes the 'check_ipsec' command.
             """
-            for conn in counter.keys():
+            for conn in connections:
                 ipsec_process = subprocess.call(["check_ipsec", conn],
                                                 stdout=devnull,
                                                 stderr=subprocess.STDOUT)
-                counter[conn].set(ipsec_process)
+                gauge.labels(conn).set(ipsec_process)
 
             metrics = generate_latest()
 
