@@ -42,7 +42,7 @@ This will create an endpoint in the direction http://localhost:9000/metrics.
 
 ``` bash
 docker login registry.paradigmadigital.com
-docker build -t registry.paradigmadigital.com/sistemas/ipsec-exporter
+docker build -t registry.paradigmadigital.com/sistemas/ipsec-exporter .
 docker push registry.paradigmadigital.com/sistemas/ipsec-exporter
 ```
 
