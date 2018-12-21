@@ -1,0 +1,11 @@
+*/*.pyc
+*/*/*.pyc
+*/__pycache__
+*/*/__pycache__
+.tox
+.git
+.gitignore
+.pytest_cache
+.python-version
+*.egg-info
+
