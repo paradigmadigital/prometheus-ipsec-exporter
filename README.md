@@ -38,7 +38,7 @@ docker run -p 9000:9000 --rm --name ipsec_exporter -d \
 
 This will create an endpoint in the direction http://localhost:9000/metrics.
 
-## Build dockerfile
+## Build docker image
 
 ``` bash
 docker login registry.paradigmadigital.com
