@@ -4,7 +4,6 @@ import subprocess
 import glob
 import re
 from sys import exit
-from os import devnull
 from flask import Flask, Response
 from prometheus_client import Gauge, generate_latest
 
@@ -12,7 +11,6 @@ from prometheus_client import Gauge, generate_latest
 class IpsecExporter:
     def __init__(self):
         self.app = Flask(__name__)
-        self.devnull = open(devnull, "w")
         self.connections = self.get_connections()
         if not self.connections:
             print("There's no files in /etc/ipsec.d/")
@@ -39,8 +37,8 @@ class IpsecExporter:
             # Assume there"s only one conn per file and change some chars
             connection = list(
                 filter(r.match, lines)
-            )[0].split(" ")[1].replace("-", "_").replace("\n", "")
-
+            )[0].split(" ")[1]
+            connection = str(connection).replace("\n", "")
             connections.append(connection)
 
         return connections
@@ -48,7 +46,6 @@ class IpsecExporter:
     def serve_metrics(self):
         "Main method to serve the metrics."
         connections = self.connections
-        devnull = self.devnull
         gauge = self.gauge
 
         @self.app.route("/metrics")
@@ -58,9 +55,9 @@ class IpsecExporter:
             it gets, it executes the 'check_ipsec' command.
             """
             for conn in connections:
-                ipsec_process = subprocess.call(["check_ipsec", conn],
-                                                stdout=devnull,
-                                                stderr=subprocess.STDOUT)
+                ipsec_process = subprocess.run(["check_ipsec", conn],
+                                               stdout=subprocess.PIPE)
+                ipsec_process = float(ipsec_process.stdout)
                 gauge.labels(conn).set(ipsec_process)
 
             metrics = generate_latest()

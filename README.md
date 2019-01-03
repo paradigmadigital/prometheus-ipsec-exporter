@@ -38,7 +38,7 @@ docker run -p 9000:9000 --rm --name ipsec_exporter -d \
 
 This will create an endpoint in the direction http://localhost:9000/metrics.
 
-## Build dockerfile
+## Build docker image
 
 ``` bash
 docker login registry.paradigmadigital.com
@@ -68,3 +68,9 @@ this.
 ``` bash
 docker run -ti -v `pwd`:/tox/files/ registry.daemons.it/tox:latest tox
 ```
+
+## Third parts
+
+The script's source used to check if the tunnel is up may be checked in the
+[zabbix-ipsec](https://github.com/a-schild/zabbix-ipsec) github repository. It's
+a pretty cool option if you use zabbix.

@@ -1,0 +1,111 @@
+#!/bin/bash
+# Written By Nicole, transformed to Zabbix by Andre Schild
+# Any Comments or Questions please e-mail to andre@schild.ws
+#
+# Plugin Name: check_ipsec
+# Version: 2.2
+# Date: 2017/11/27 2.2 Removed test for gateway.txt file
+# Date: 2016/11/01 2.1 Added support for ikev1 tunnels with strongswan
+# Date: 2015/02/06 2.0 Added support for strongswan
+#
+#
+# ------------Defining Variables------------
+PROGNAME="$(basename $0)"
+# ---------- Change to your needs ----------
+IPSECBIN="$(which ipsec)"
+FPINGBIN="$(which fping)"
+# ping server in network on the other side of the tunnel
+PINGIP=1		# ping yes or no (1/0)
+USE_SUDO=0		# Run the ipsec command via sudo
+SUDOBIN="$(which sudo)"
+# ------------------------------------------
+
+if [ $USE_SUDO -eq 1 ];
+then
+    IPSECCMD="$SUDOBIN -- $IPSECBIN"
+else
+    IPSECCMD=$IPSECBIN
+fi
+
+# Testing availability of $IPSECBIN, $FPINGBIN
+if [ $# -eq 0 ];
+then
+   echo UNKNOWN - missing Arguments. Run check_ipsec --help
+   exit $STATE_UNKNOWN
+fi
+
+test -e $IPSECBIN
+if [ $? -ne 0 ];
+then
+	echo CRITICAL - $IPSECBIN not exist
+	exit $STATE_CRITICAL
+else
+	STRONG="$($IPSECBIN --version |grep strongSwan | wc -l)"
+fi
+
+if [ $PINGIP -eq 1 ]
+then
+	test -e $FPINGBIN
+	if [ $? -ne 0 ];
+	then
+		echo CRITICAL - $FPINGBIN not exist
+		exit $STATE_CRITICAL
+	fi
+fi
+
+test_tunnel() {
+
+	CONN="$1"
+	if [[ "$STRONG" -eq "1" ]]
+	then
+	    tunneltest=$($IPSECCMD status $CONN | grep -e "ESTABLISHED" | wc -l)
+	    if [[ "$tunneltest" -eq "0" ]]
+    	then
+		    tunneltest=$($IPSECCMD whack --status | grep -e "IPsec SA established" | grep -e "newest IPSEC" |grep -e "$CONN" | wc -l)
+	    fi
+	else
+	    tunneltest=$($IPSECCMD whack --status | grep -e "IPsec SA established" | grep -e "newest IPSEC" |grep -e "$CONN" | wc -l)
+	fi
+
+	if [[ "$tunneltest" -eq "0" ]]
+    then
+        # Return bad
+	    echo 0
+    else
+        # Return good
+	    echo 1
+    fi
+}
+
+
+case "$1" in
+--help)
+        print_help
+        exit $STATE_OK
+        ;;
+-h)
+        print_help
+        exit $STATE_OK
+        ;;
+*)
+
+	if [ $# -eq 1 ]
+	then
+    	test_tunnel $1
+    	else
+	        if [ $# -eq 2 ]
+	        then
+    		    ping_tunnel $1 $2
+    	    else
+
+    	        if [ $# -eq 3 ]
+		        then
+    		        ping_tunnel_rtt $1 $2
+    		    else
+
+    		        print_help
+    		    fi
+    	    fi
+    fi
+    ;;
+esac
