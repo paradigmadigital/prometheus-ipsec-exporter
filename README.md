@@ -13,6 +13,12 @@ that the tunnel is up is to ping the other side, not to execute a `ipsec`
 command.
 
 ## Requirements
+
+Docker instaled:
+```text
+yum install docker 
+```
+
 Python packages:
 
 ```text
@@ -33,7 +39,7 @@ But the tests only work with python3.
 docker run -p 9000:9000 --rm --name ipsec_exporter -d \
     -v /etc/ipsec.d/:/etc/ipsec.d/ -v \
     /var/run/pluto/pluto.ctl:/var/run/pluto/pluto.ctl \
-    registry.paradigmadigital.com/sistemas/ipsec-exporter
+    registry.paradigmadigital.com/prometheus-exporters/ipsec-exporter
 ```
 
 This will create an endpoint in the direction http://localhost:9000/metrics.
@@ -42,8 +48,8 @@ This will create an endpoint in the direction http://localhost:9000/metrics.
 
 ``` bash
 docker login registry.paradigmadigital.com
-docker build -t registry.paradigmadigital.com/sistemas/ipsec-exporter .
-docker push registry.paradigmadigital.com/sistemas/ipsec-exporter
+docker build -t registry.paradigmadigital.com/prometheus-exporters/ipsec-exporter .
+docker push registry.paradigmadigital.com/prometheus-exporters/ipsec-exporter
 ```
 
 ## Automatic deployment
