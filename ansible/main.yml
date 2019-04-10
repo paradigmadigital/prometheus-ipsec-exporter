@@ -2,9 +2,9 @@
 - name: Create ipsec_exporter service
   hosts: all
   vars:
-    docker_registry: ""
-    docker_username: ""
-    docker_password:  ""
+    docker_registry:
+    docker_username:
+    docker_password:
   tasks:
     - name: Copy the init service
       become: true

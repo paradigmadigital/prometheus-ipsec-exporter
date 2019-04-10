@@ -14,7 +14,7 @@ command.
 
 ## Requirements
 
-Docker instaled:
+Docker installed:
 ```text
 yum install docker 
 ```
