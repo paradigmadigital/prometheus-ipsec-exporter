@@ -23,6 +23,7 @@
         registry: "{{ docker_registry }}"
         username: "{{ docker_username }}"
         password: "{{ docker_password }}"
+        debug: yes
     - name: Enable and start service
       become: true
       service:
