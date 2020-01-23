@@ -13,6 +13,12 @@ that the tunnel is up is to ping the other side, not to execute a `ipsec`
 command.
 
 ## Requirements
+
+Docker installed:
+```text
+yum install docker
+```
+
 Python packages:
 
 ```text
