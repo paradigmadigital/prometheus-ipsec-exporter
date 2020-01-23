@@ -39,7 +39,7 @@ But the tests only work with python3.
 docker run -p 9000:9000 --rm --name ipsec_exporter -d \
     -v /etc/ipsec.d/:/etc/ipsec.d/ -v \
     /var/run/pluto/pluto.ctl:/var/run/pluto/pluto.ctl \
-    registry.paradigmadigital.com/prometheus-exporter/ipsec-exporter
+    paradigmadigitalorg/prometheus-ipsec-exporter:amazon-2
 ```
 
 This will create an endpoint in the direction http://localhost:9000/metrics.
@@ -47,9 +47,9 @@ This will create an endpoint in the direction http://localhost:9000/metrics.
 ## Build docker image
 
 ``` bash
-docker login registry.paradigmadigital.com
-docker build -t registry.paradigmadigital.com/prometheus-exporter/ipsec-exporter .
-docker push registry.paradigmadigital.com/prometheus-exporter/ipsec-exporter
+docker login
+docker build -f Dockerfile_2 -t paradigmadigitalorg/prometheus-ipsec-exporter:amazon-2 .
+docker push paradigmadigitalorg/prometheus-ipsec-exporter:amazon-2
 ```
 
 ## Automatic deployment
@@ -72,7 +72,7 @@ this.
 ## Testing
 
 ``` bash
-docker run -ti -v `pwd`:/tox/files/ registry.daemons.it/tox:latest tox
+docker run -ti -v `pwd`:/tox/files/ alexperezpujol/tox:latest tox
 ```
 
 ## Third parts
