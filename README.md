@@ -1,6 +1,6 @@
 # ipsec_exporter
-Ipsec exporter to prometheus. This program creates an endpoint in
-http://localhost:9000/metrics that exposes the state of ipsec tunnels.
+Ipsec exporter to prometheus. This program creates an endpoint in that exposes
+the state of ipsec tunnels.
 
 There's [this go project](https://github.com/dennisstritzke/ipsec_exporter)
 which does more or less the same as this project. It's main problem is that it
@@ -45,6 +45,9 @@ docker run -p 9000:9000 --rm --name ipsec_exporter -d \
 This will create an endpoint in the direction http://localhost:9000/metrics.
 
 ## Build docker image
+
+There's two dockerfiles. One for Amazon Linux 1 image and the other for Amazon
+Linux 2 image:
 
 ``` bash
 docker login
