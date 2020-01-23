@@ -75,7 +75,7 @@ this.
 docker run -ti -v `pwd`:/tox/files/ alexperezpujol/tox:latest tox
 ```
 
-## Third parts
+## Third party
 
 The script's source used to check if the tunnel is up may be checked in the
 [zabbix-ipsec](https://github.com/a-schild/zabbix-ipsec) github repository. It's
