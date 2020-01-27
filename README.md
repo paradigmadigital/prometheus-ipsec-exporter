@@ -1,6 +1,6 @@
 # ipsec_exporter
-Ipsec exporter to prometheus. This program creates an endpoint in
-http://localhost:9000/metrics that exposes the state of ipsec tunnels.
+Ipsec exporter to prometheus. This program creates an endpoint in that exposes
+the state of ipsec tunnels.
 
 There's [this go project](https://github.com/dennisstritzke/ipsec_exporter)
 which does more or less the same as this project. It's main problem is that it
@@ -39,17 +39,20 @@ But the tests only work with python3.
 docker run -p 9000:9000 --rm --name ipsec_exporter -d \
     -v /etc/ipsec.d/:/etc/ipsec.d/ -v \
     /var/run/pluto/pluto.ctl:/var/run/pluto/pluto.ctl \
-    registry.paradigmadigital.com/prometheus-exporter/ipsec-exporter
+    paradigmadigitalorg/prometheus-ipsec-exporter:amazon-2
 ```
 
 This will create an endpoint in the direction http://localhost:9000/metrics.
 
 ## Build docker image
 
+There's two dockerfiles. One for Amazon Linux 1 image and the other for Amazon
+Linux 2 image:
+
 ``` bash
-docker login registry.paradigmadigital.com
-docker build -t registry.paradigmadigital.com/prometheus-exporter/ipsec-exporter .
-docker push registry.paradigmadigital.com/prometheus-exporter/ipsec-exporter
+docker login
+docker build -f Dockerfile_2 -t paradigmadigitalorg/prometheus-ipsec-exporter:amazon-2 .
+docker push paradigmadigitalorg/prometheus-ipsec-exporter:amazon-2
 ```
 
 ## Automatic deployment
@@ -72,10 +75,10 @@ this.
 ## Testing
 
 ``` bash
-docker run -ti -v `pwd`:/tox/files/ registry.daemons.it/tox:latest tox
+docker run -ti -v `pwd`:/tox/files/ alexperezpujol/tox:latest tox
 ```
 
-## Third parts
+## Third party
 
 The script's source used to check if the tunnel is up may be checked in the
 [zabbix-ipsec](https://github.com/a-schild/zabbix-ipsec) github repository. It's
